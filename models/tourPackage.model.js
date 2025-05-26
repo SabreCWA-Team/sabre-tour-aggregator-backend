@@ -62,7 +62,17 @@ const TourPackageSchema = new mongoose.Schema(
     },
     booking: {
       cancellationPolicy: { type: String },
-      paymentMethods: [{ type: String }],
+      paymentMethods: [
+        {
+          id: { type: Number, required: true },
+          name: { type: String, required: true },
+          type: {
+            type: String,
+            enum: ["local", "international"],
+            required: true,
+          },
+        },
+      ],
       minGroupSize: { type: Number },
       maxGroupSize: { type: Number },
     },
