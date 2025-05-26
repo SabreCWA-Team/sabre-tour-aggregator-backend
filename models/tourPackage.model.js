@@ -53,7 +53,7 @@ const TourPackageSchema = new mongoose.Schema(
       city: { type: String },
       duration: { type: String },
     },
-    itinerary: [ItinerarySchema],
+    itinerary: ItinerarySchema,
     pricing: {
       pricePerPerson: { type: Number },
       currency: { type: String },
