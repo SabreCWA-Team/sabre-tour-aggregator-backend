@@ -44,6 +44,11 @@ const ItinerarySchema = new mongoose.Schema(
 
 const TourPackageSchema = new mongoose.Schema(
   {
+    createBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     basicInfo: {
       tour_name: { type: String, required: true },
       description: { type: String },

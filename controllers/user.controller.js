@@ -34,7 +34,7 @@ const forgotPassword = async (req, res) => {
       return res.status(404).json({ error: "No account with that email." });
 
     const token = crypto.randomBytes(32).toString("hex");
-    const expires = Date.now() + 3600000; // 1 hour
+    const expires = Date.now() + 3600000;
 
     user.resetPasswordToken = token;
     user.resetPasswordExpires = expires;
@@ -48,7 +48,7 @@ const forgotPassword = async (req, res) => {
       },
     });
 
-    const resetUrl = `http://localhost:5173/reset-password?token=${token}`;
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
 
     const info = await transporter.sendMail({
       from: '"GetThere Support" <no-reply@getthere.test>',
