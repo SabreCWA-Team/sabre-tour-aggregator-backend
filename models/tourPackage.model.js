@@ -44,7 +44,7 @@ const ItinerarySchema = new mongoose.Schema(
 
 const TourPackageSchema = new mongoose.Schema(
   {
-    createBy: {
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
