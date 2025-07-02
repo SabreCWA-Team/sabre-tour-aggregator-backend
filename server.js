@@ -4,8 +4,9 @@ const mongoose = require("mongoose");
 const Package = require("./models/tourPackage.model");
 const packageRoute = require("./routes/tourPackage.route");
 const userRoutes = require("./routes/user.route");
-const pricingRuleRoutes = require("./routes/pricingRule.route");
+const pricingRuleRoutes = require("./routes/distributorPrice.route");
 const cors = require("cors");
+const widgetRoutes = require("./routes/distributorWidget.route");
 const app = express();
 
 app.use(cors());
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/api/packages", packageRoute);
 app.use("/api/users", userRoutes);
 app.use("/api/pricing-rules", pricingRuleRoutes);
+app.use("/api/widget", widgetRoutes);
 
 app.get("/", (req, res) => {
   res.send("Its running fine");
