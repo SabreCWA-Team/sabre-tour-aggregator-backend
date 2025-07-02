@@ -26,6 +26,24 @@ const getRules = async (req, res) => {
   }
 };
 
+const getRule = async (req, res) => {
+  try {
+    const { packageId } = req.params;
+    if (!packageId) {
+      return res.status(400).json({ error: "Package ID is required" });
+    }
+
+    const rules = await PricingRule.find({ package: packageId }).populate({
+      path: "package",
+      select: "basicInfo.tour_name pricing",
+    });
+
+    res.json(rules);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const updateRule = async (req, res) => {
   try {
     const updatedRule = await PricingRule.findByIdAndUpdate(
@@ -54,4 +72,4 @@ const deleteRule = async (req, res) => {
   }
 };
 
-module.exports = { setRule, getRules, updateRule, deleteRule };
+module.exports = { setRule, getRules, getRule, updateRule, deleteRule };
