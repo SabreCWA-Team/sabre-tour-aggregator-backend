@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const Package = require("../models/tourPackage.model");
 const {
   getPackages,
   getPackage,
