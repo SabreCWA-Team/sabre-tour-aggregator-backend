@@ -36,8 +36,8 @@ const ItinerarySchema = new mongoose.Schema(
     title: { type: String },
     description: { type: String },
     location: { type: String },
-    startTime: { type: Date },
-    endTime: { type: Date },
+    startTime: { type: String },
+    endTime: { type: String },
   },
   { _id: false }
 );
@@ -58,7 +58,7 @@ const TourPackageSchema = new mongoose.Schema(
       city: { type: String },
       duration: { type: String },
     },
-    itinerary: ItinerarySchema,
+    itinerary: [ItinerarySchema],
     pricing: {
       pricePerPerson: { type: Number },
       currency: { type: String },
