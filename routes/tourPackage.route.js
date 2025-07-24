@@ -7,11 +7,13 @@ const {
   updatePackage,
   deletePackage,
 } = require("../controllers/tourPackage.controller");
+const authenticateUser = require("../middleware/auth.middleware");
 
 router.get("/", getPackages);
 router.get("/:id", getPackage);
-router.post("/", createPackage);
-router.put("/:id", updatePackage);
-router.delete("/:id", deletePackage);
+
+router.post("/", authenticateUser, createPackage);
+router.put("/:id", authenticateUser, updatePackage);
+router.delete("/:id", authenticateUser, deletePackage);
 
 module.exports = router;

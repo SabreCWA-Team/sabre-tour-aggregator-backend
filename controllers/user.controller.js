@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
 const resetPassword = async (req, res) => {
   const { token, password } = req.body;
@@ -110,8 +111,16 @@ const loginUser = async (req, res) => {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(401).json({ error: "Incorrect password" });
 
+    const token = jwt.sign(
+      { _id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
     const { password: _, ...safeUser } = user.toObject();
-    res.status(200).json({ message: "Login successful", user: safeUser });
+    res
+      .status(200)
+      .json({ message: "Login successful", user: safeUser, token });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
