@@ -2,10 +2,8 @@ const mongoose = require("mongoose");
 
 const DiscountSchema = new mongoose.Schema(
   {
-    discountType: { type: String },
+    discountType: { type: Number },
     minGroupSize: { type: Number },
-    startDate: { type: Date },
-    endDate: { type: Date },
   },
   { _id: false }
 );
