@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const DiscountSchema = new mongoose.Schema(
   {
     discountType: { type: String },
-    discountValue: { type: Number },
     minGroupSize: { type: Number },
     startDate: { type: Date },
     endDate: { type: Date },
@@ -16,7 +15,17 @@ const AvailabilitySchema = new mongoose.Schema(
     start_date: { type: Date },
     end_date: { type: Date },
     is_available: { type: Boolean, default: true },
+    min_guests: { type: Number },
     max_guests: { type: Number },
+  },
+  { _id: false }
+);
+
+const PricingSchema = new mongoose.Schema(
+  {
+    pricePerPerson: { type: Number, required: true },
+    currency: { type: String, default: "USD" },
+    discount: DiscountSchema,
   },
   { _id: false }
 );
@@ -59,17 +68,13 @@ const TourPackageSchema = new mongoose.Schema(
       duration: { type: String },
     },
     itinerary: [ItinerarySchema],
-    pricing: {
-      pricePerPerson: { type: Number },
-      currency: { type: String },
-      discount: DiscountSchema,
-      availability: [AvailabilitySchema],
-    },
+    pricing: PricingSchema,
+    availability: [AvailabilitySchema],
+
     booking: {
       cancellationPolicy: { type: String },
       paymentMethods: [
         {
-          id: { type: Number, required: true },
           name: { type: String, required: true },
           type: {
             type: String,
@@ -78,8 +83,6 @@ const TourPackageSchema = new mongoose.Schema(
           },
         },
       ],
-      minGroupSize: { type: Number },
-      maxGroupSize: { type: Number },
     },
     media: {
       tourImages: [{ type: String }],
