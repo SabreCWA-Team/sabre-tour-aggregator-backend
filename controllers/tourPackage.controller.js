@@ -12,8 +12,9 @@ const getPackages = async (req, res) => {
 const getPackage = async (req, res) => {
   try {
     const { id } = req.params;
-    const package = await Package.findById(id);
-    res.status(200).json(package);
+    const pkg = await Package.findById(id);
+    if (!pkg) return res.status(404).json({ message: "Package not found" });
+    res.status(200).json(pkg);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
