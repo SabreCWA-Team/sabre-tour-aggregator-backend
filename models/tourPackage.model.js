@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const DiscountSchema = new mongoose.Schema(
   {
-    discountType: { type: Number },
+    discountValue: { type: Number },
     minGroupSize: { type: Number },
   },
   { _id: false }

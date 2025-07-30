@@ -4,10 +4,12 @@ const PricingRule = require("../models/distributorPrice.model");
 const getWidgetToursForDistributor = async (req, res) => {
   try {
     const { distributorId } = req.params;
+    const { tourId } = req.query;
 
     const pricingRules = await PricingRule.find({
       distributor: distributorId,
       isActive: true,
+      ...(tourId && { package: tourId }),
     }).populate({
       path: "package",
       select:
@@ -26,6 +28,7 @@ const getWidgetToursForDistributor = async (req, res) => {
           category: tour.basicInfo.tour_type,
           image: tour.media?.tourImages?.[0] || "",
           price: rule.finalPrice,
+          currency: rule.currency || "₦",
           availability: tour.media?.availability || [],
           bookingUrl: `https://yourdomain.com/book/${tour._id}?distributor=${distributorId}`,
         };
