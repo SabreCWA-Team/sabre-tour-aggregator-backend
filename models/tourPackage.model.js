@@ -10,11 +10,11 @@ const DiscountSchema = new mongoose.Schema(
 
 const AvailabilitySchema = new mongoose.Schema(
   {
-    start_date: { type: Date },
-    end_date: { type: Date },
-    is_available: { type: Boolean, default: true },
-    min_guests: { type: Number },
-    max_guests: { type: Number },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    isAvailable: { type: Boolean, default: true },
+    minGuests: { type: Number },
+    maxGuests: { type: Number },
   },
   { _id: false }
 );
