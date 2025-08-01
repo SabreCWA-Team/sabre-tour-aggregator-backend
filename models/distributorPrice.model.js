@@ -20,7 +20,7 @@ const distributorPriceSchema = new mongoose.Schema(
 
     finalPrice: { type: Number, required: true },
     basePrice: { type: Number, required: true },
-    currency: { type: String, default: "USD" },
+    currency: { type: String, default: "NGN" },
   },
   { timestamps: true }
 );

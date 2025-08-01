@@ -11,6 +11,7 @@ const cors = require("cors");
 const widgetRoutes = require("./routes/distributorWidget.route");
 const bookingRoutes = require("./routes/booking.route");
 const uploadRoutes = require("./routes/upload.route");
+const paymentRoutes = require("./routes/payment.route");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use("/api/pricing-rules", pricingRuleRoutes);
 app.use("/api/widget", widgetRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api", uploadRoutes);
+app.use("/api/payment", paymentRoutes);
 
 app.get("/", (req, res) => {
   res.send("Its running fine");

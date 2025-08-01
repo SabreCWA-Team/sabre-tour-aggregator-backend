@@ -15,6 +15,7 @@ const BookingSchema = new mongoose.Schema(
     userDetails: {
       name: { type: String, required: true },
       email: { type: String, required: true },
+      phone: { type: String },
     },
     date: { type: Date, required: true },
     travelers: { type: Number, required: true, min: 1 },
@@ -22,6 +23,12 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "confirmed", "cancelled"],
       default: "pending",
+    },
+    reference: { type: String, unique: true, sparse: true },
+    paymentMethod: {
+      type: String,
+      enum: ["Paystack", "Flutterwave", "Bank Transfer"],
+      default: "Paystack",
     },
   },
   { timestamps: true }
