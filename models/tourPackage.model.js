@@ -22,7 +22,7 @@ const AvailabilitySchema = new mongoose.Schema(
 const PricingSchema = new mongoose.Schema(
   {
     pricePerPerson: { type: Number, required: true },
-    currency: { type: String, default: "USD" },
+    currency: { type: String, default: "NGN" },
     discount: DiscountSchema,
   },
   { _id: false }
@@ -69,19 +69,6 @@ const TourPackageSchema = new mongoose.Schema(
     pricing: PricingSchema,
     availability: [AvailabilitySchema],
 
-    booking: {
-      cancellationPolicy: { type: String },
-      paymentMethods: [
-        {
-          name: { type: String, required: true },
-          type: {
-            type: String,
-            enum: ["local", "international"],
-            required: true,
-          },
-        },
-      ],
-    },
     media: {
       tourImages: [{ type: String }],
       tourVideos: [{ type: String }],
@@ -89,6 +76,7 @@ const TourPackageSchema = new mongoose.Schema(
     },
     additional: {
       requirements: { type: String },
+      cancellationPolicy: { type: String },
       contact: ContactSchema,
       tags: [{ type: String }],
     },
