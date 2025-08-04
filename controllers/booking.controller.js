@@ -43,7 +43,7 @@ const getOwnerBookings = async (req, res) => {
     const packageIds = ownerPackages.map((pkg) => pkg._id);
 
     const bookings = await Booking.find({ tourId: { $in: packageIds } })
-      .populate("tourId", "title")
+      .populate("tourId")
       .populate("distributorId", "name email");
 
     res.json(bookings);
