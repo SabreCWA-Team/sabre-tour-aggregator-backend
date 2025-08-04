@@ -2,6 +2,7 @@ const axios = require("axios");
 const Booking = require("../models/booking.model");
 const Package = require("../models/tourPackage.model");
 const PricingRule = require("../models/distributorPrice.model");
+const sendEmail = require("../utils/sendEmail");
 
 const initializePayment = async (req, res) => {
   const { name, email, phone, date, travelers, tourId, distributorId } =
@@ -31,6 +32,12 @@ const initializePayment = async (req, res) => {
       travelers,
       status: "pending",
       paymentMethod: "Paystack",
+    });
+
+    await sendEmail({
+      to: email,
+      subject: "Booking Initiated",
+      html: `<p>Hello ${name},</p><p>Your booking for <strong>${tour.basicInfo?.tour_name}</strong> has been initiated. Please complete your payment to confirm it.</p>`,
     });
 
     const paystackReference = booking._id.toString();
@@ -79,12 +86,18 @@ const verifyPayment = async (req, res) => {
 
     const data = response.data.data;
     if (data.status === "success") {
-      const booking = await Booking.findByIdAndUpdate(reference);
+      const booking = await Booking.findById(reference).populate("tourId");
       if (!booking)
         return res.status(404).json({ message: "Booking not found" });
 
       booking.status = "confirmed";
       await booking.save();
+
+      await sendEmail({
+        to: booking.userDetails.email,
+        subject: "Payment Confirmed",
+        html: `<p>Hi ${booking.userDetails.name},</p><p>Your payment for <strong>${booking.tourId?.basicInfo?.tour_name}</strong> has been received. Your booking is now confirmed.</p>`,
+      });
 
       return res.status(200).json({ message: "Payment verified" });
     }
