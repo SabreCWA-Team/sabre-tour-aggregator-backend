@@ -12,6 +12,7 @@ const widgetRoutes = require("./routes/distributorWidget.route");
 const bookingRoutes = require("./routes/booking.route");
 const uploadRoutes = require("./routes/upload.route");
 const paymentRoutes = require("./routes/payment.route");
+const tourSearchRoutes = require("./routes/tourSearch.route");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/widget", widgetRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api", uploadRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/tours/search", tourSearchRoutes);
 
 app.get("/", (req, res) => {
   res.send("Its running fine");
