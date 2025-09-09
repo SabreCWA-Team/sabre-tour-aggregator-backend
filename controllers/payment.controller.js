@@ -36,8 +36,13 @@ const initializePayment = async (req, res) => {
 
     await sendEmail({
       to: email,
-      subject: "Booking Initiated",
-      html: `<p>Hello ${name},</p><p>Your booking for <strong>${tour.basicInfo?.tour_name}</strong> has been initiated. Please complete your payment to confirm it.</p>`,
+      templateId: process.env.SENDGRID_BOOKING_TEMPLATE_ID,
+      dynamicData: {
+        name,
+        tourName: tour.basicInfo?.tour_name,
+        paymentLink: `http://localhost:3001/payment-success`,
+        year: new Date().getFullYear(),
+      },
     });
 
     const paystackReference = booking._id.toString();
@@ -95,8 +100,12 @@ const verifyPayment = async (req, res) => {
 
       await sendEmail({
         to: booking.userDetails.email,
-        subject: "Payment Confirmed",
-        html: `<p>Hi ${booking.userDetails.name},</p><p>Your payment for <strong>${booking.tourId?.basicInfo?.tour_name}</strong> has been received. Your booking is now confirmed.</p>`,
+        templateId: process.env.SENDGRID_PAYMENT_TEMPLATE_ID,
+        dynamicData: {
+          name: booking.userDetails.name,
+          tourName: booking.tourId?.basicInfo?.tour_name,
+          year: new Date().getFullYear(),
+        },
       });
 
       return res.status(200).json({ message: "Payment verified" });

@@ -1,6 +1,6 @@
 const User = require("../models/user.model");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+const sendEmail = require("../utils/sendEmail");
 const jwt = require("jsonwebtoken");
 
 const resetPassword = async (req, res) => {
@@ -41,28 +41,20 @@ const forgotPassword = async (req, res) => {
     user.resetPasswordExpires = expires;
     await user.save();
 
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+    const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
+    await sendEmail({
+      to: user.email,
+      templateId: process.env.SENDGRID_RESET_TEMPLATE_ID,
+      dynamicData: {
+        name: user.firstName || user.email,
+        resetLink,
+        year: new Date().getFullYear(),
       },
     });
 
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
-
-    const info = await transporter.sendMail({
-      from: '"GetThere Support" <no-reply@getthere.test>',
-      to: user.email,
-      subject: "Reset Your Password",
-      html: `<p>Click below to reset your password:</p>
-             <a href="${resetUrl}">${resetUrl}</a>`,
-    });
-
-    console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
-
     res.status(200).json({
-      message: "Reset link sent (preview URL printed on server)",
+      message: "Reset link sent",
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

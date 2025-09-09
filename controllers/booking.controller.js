@@ -78,9 +78,13 @@ const updateBookingStatus = async (req, res) => {
         "tourId"
       );
       await sendEmail({
-        to: updated.userDetails.email,
-        subject: "Booking Cancelled",
-        html: `<p>Hi ${updated.userDetails.name},</p><p>We're sorry to inform you that your booking for <strong>${populatedBooking.tourId?.basicInfo?.tour_name}</strong> has been cancelled.</p>`,
+        to: populatedBooking.userDetails.email,
+        templateId: process.env.SENDGRID_CANCELLED_TEMPLATE_ID,
+        dynamicData: {
+          name: populatedBooking.userDetails.name,
+          tourName: populatedBooking.tourId?.basicInfo?.tour_name,
+          year: new Date().getFullYear(),
+        },
       });
     }
 
