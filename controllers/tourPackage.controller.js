@@ -20,6 +20,15 @@ const getPackage = async (req, res) => {
   }
 };
 
+const getOwnerPackages = async (req, res) => {
+  try {
+    const packages = await Package.find({ createdBy: req.user._id });
+    res.status(200).json(packages);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const createPackage = async (req, res) => {
   try {
     const packageData = {
@@ -66,6 +75,7 @@ const deletePackage = async (req, res) => {
 module.exports = {
   getPackages,
   getPackage,
+  getOwnerPackages,
   createPackage,
   updatePackage,
   deletePackage,

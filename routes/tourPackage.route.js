@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  getOwnerPackages,
   getPackages,
   getPackage,
   createPackage,
@@ -10,6 +11,7 @@ const {
 const authenticateUser = require("../middleware/auth.middleware");
 
 router.get("/", getPackages);
+router.get("/my-packages", authenticateUser, getOwnerPackages);
 router.get("/:id", getPackage);
 
 router.post("/", authenticateUser, createPackage);

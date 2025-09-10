@@ -86,8 +86,15 @@ const registerUser = async (req, res) => {
       displayName,
       photoURL,
     });
+
+    const token = jwt.sign(
+      { _id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
     const { password: _, ...safeUser } = user.toObject();
-    res.status(201).json({ message: "User registered", user: safeUser });
+    res.status(201).json({ message: "User registered", user: safeUser, token });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
