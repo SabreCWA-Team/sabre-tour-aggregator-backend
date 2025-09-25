@@ -1,9 +1,11 @@
 const Booking = require("../models/booking.model");
 const Package = require("../models/tourPackage.model");
+const mongoose = require("mongoose");
 
 const getBookingAnalytics = async (req, res) => {
   try {
     const { ownerId, distributorId, months = 6, period = "month" } = req.query;
+    console.log("Query Params:", req.query);
 
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - parseInt(months));
@@ -11,13 +13,13 @@ const getBookingAnalytics = async (req, res) => {
     const match = { createdAt: { $gte: startDate } };
 
     if (distributorId) {
-      match.distributorId = distributorId;
+      match.distributorId = new mongoose.Types.ObjectId(distributorId);
     }
 
     if (ownerId) {
-      const ownerPackages = await Package.find({ createdBy: ownerId }).select(
-        "_id"
-      );
+      const ownerPackages = await Package.find({
+        createdBy: new mongoose.Types.ObjectId(ownerId),
+      }).select("_id");
       const packageIds = ownerPackages.map((p) => p._id);
       match.tourId = { $in: packageIds };
     }
