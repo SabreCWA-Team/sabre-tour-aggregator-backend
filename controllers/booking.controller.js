@@ -54,6 +54,22 @@ const getOwnerBookings = async (req, res) => {
   }
 };
 
+const getDistributorBookings = async (req, res) => {
+  const { distributorId } = req.params;
+
+  try {
+    const bookings = await Booking.find({ distributorId })
+      .populate("tourId")
+      .populate("distributorId", "name email")
+      .lean();
+
+    res.json(bookings);
+  } catch (error) {
+    console.error("Get Bookings Error:", error);
+    res.status(500).json({ error: "Failed to fetch bookings" });
+  }
+};
+
 const updateBookingStatus = async (req, res) => {
   const { bookingId } = req.params;
   const { status } = req.body;
@@ -95,4 +111,9 @@ const updateBookingStatus = async (req, res) => {
   }
 };
 
-module.exports = { createBooking, getOwnerBookings, updateBookingStatus };
+module.exports = {
+  createBooking,
+  getOwnerBookings,
+  getDistributorBookings,
+  updateBookingStatus,
+};
