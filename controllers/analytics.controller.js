@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const getBookingAnalytics = async (req, res) => {
   try {
     const { ownerId, distributorId, months = 6, period = "month" } = req.query;
-    console.log("Query Params:", req.query);
 
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - parseInt(months));
