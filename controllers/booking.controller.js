@@ -45,7 +45,7 @@ const getOwnerBookings = async (req, res) => {
 
     const bookings = await Booking.find({ tourId: { $in: packageIds } })
       .populate("tourId")
-      .populate("distributorId", "name email");
+      .populate("distributorId", "displayName email");
 
     res.json(bookings);
   } catch (error) {
@@ -59,8 +59,11 @@ const getDistributorBookings = async (req, res) => {
 
   try {
     const bookings = await Booking.find({ distributorId })
-      .populate("tourId")
-      .populate("distributorId", "name email")
+      .populate({
+        path: "tourId",
+        populate: { path: "createdBy", select: "displayName email" },
+      })
+      .populate("distributorId", "displayName email")
       .lean();
 
     res.json(bookings);
