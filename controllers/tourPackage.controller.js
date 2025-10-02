@@ -2,11 +2,44 @@ const Package = require("../models/tourPackage.model");
 
 const getPackages = async (req, res) => {
   try {
-    const packages = await Package.find({}).populate(
-      "createdBy",
-      "displayName email company"
-    );
-    res.status(200).json(packages);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const { search, location, category, date } = req.query;
+    const query = {};
+
+    if (search) {
+      query["basicInfo.tour_name"] = { $regex: search, $options: "i" };
+    }
+
+    if (location) {
+      query["basicInfo.location"] = { $regex: location, $options: "i" };
+    }
+
+    if (category) {
+      query["basicInfo.tour_type"] = category;
+    }
+
+    if (date) {
+      query["availability.startDate"] = { $gte: new Date(date) };
+    }
+
+    const totalItems = await Package.countDocuments(query);
+
+    const packages = await Package.find(query)
+      .populate("createdBy", "displayName email company")
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      data: packages,
+      page,
+      limit,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
