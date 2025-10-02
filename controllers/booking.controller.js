@@ -1,3 +1,4 @@
+const { query } = require("express");
 const Booking = require("../models/booking.model");
 const Package = require("../models/tourPackage.model");
 const User = require("../models/user.model");
@@ -34,39 +35,56 @@ const createBooking = async (req, res) => {
   }
 };
 
-const getOwnerBookings = async (req, res) => {
-  const { ownerId } = req.params;
+const getBookings = async (req, res) => {
+  const { role, id } = req.params;
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    status,
+    sortBy = "createdAt",
+    order = "desc",
+  } = req.query;
 
   try {
-    const ownerPackages = await Package.find({ createdBy: ownerId }).select(
-      "_id"
-    );
-    const packageIds = ownerPackages.map((pkg) => pkg._id);
+    let query = {};
 
-    const bookings = await Booking.find({ tourId: { $in: packageIds } })
-      .populate("tourId")
-      .populate("distributorId", "displayName email");
+    if (role === "owner") {
+      const ownerPackages = await Package.find({ createdBy: id }).select("_id");
+      const packageIds = ownerPackages.map((pkg) => pkg._id);
+      query.tourId = { $in: packageIds };
+    }
 
-    res.json(bookings);
-  } catch (error) {
-    console.error("Get Bookings Error:", error);
-    res.status(500).json({ error: "Failed to fetch bookings" });
-  }
-};
+    if (role === "distributor") {
+      query.distributorId = id;
+    }
 
-const getDistributorBookings = async (req, res) => {
-  const { distributorId } = req.params;
+    if (status) query.status = status;
+    if (search) {
+      query.$or = [
+        { "userDetails.name": { $regex: search, $options: "i" } },
+        { "userDetails.email": { $regex: search, $options: "i" } },
+      ];
+    }
 
-  try {
-    const bookings = await Booking.find({ distributorId })
+    const total = await Booking.countDocuments(query);
+
+    const bookings = await Booking.find(query)
       .populate({
         path: "tourId",
         populate: { path: "createdBy", select: "displayName email" },
       })
       .populate("distributorId", "displayName email")
-      .lean();
+      .sort({ [sortBy]: order === "asc" ? 1 : -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
 
-    res.json(bookings);
+    res.json({
+      bookings,
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
     console.error("Get Bookings Error:", error);
     res.status(500).json({ error: "Failed to fetch bookings" });
@@ -116,7 +134,6 @@ const updateBookingStatus = async (req, res) => {
 
 module.exports = {
   createBooking,
-  getOwnerBookings,
-  getDistributorBookings,
+  getBookings,
   updateBookingStatus,
 };
