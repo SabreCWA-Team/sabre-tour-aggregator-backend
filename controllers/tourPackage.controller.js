@@ -2,7 +2,10 @@ const Package = require("../models/tourPackage.model");
 
 const getPackages = async (req, res) => {
   try {
-    const packages = await Package.find({});
+    const packages = await Package.find({}).populate(
+      "createdBy",
+      "displayName email company"
+    );
     res.status(200).json(packages);
   } catch (error) {
     res.status(500).json({ message: error.message });
