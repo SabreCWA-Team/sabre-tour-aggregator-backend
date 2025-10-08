@@ -58,8 +58,26 @@ const getPackage = async (req, res) => {
 
 const getOwnerPackages = async (req, res) => {
   try {
-    const packages = await Package.find({ createdBy: req.user._id });
-    res.status(200).json(packages);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const query = { createdBy: req.user._id };
+
+    const totalItems = await Package.countDocuments(query);
+
+    const packages = await Package.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      data: packages,
+      page,
+      limit,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
