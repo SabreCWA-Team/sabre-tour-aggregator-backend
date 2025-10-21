@@ -1,0 +1,31 @@
+name: Deploy Backend via SSH
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Fetch secrets from Doppler
+        uses: dopplerhq/secrets-fetch-action@v1.3.0
+        id: doppler
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+
+      - name: deploy to VM via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ steps.doppler.outputs.ATLAS_VPS_HOST }}
+          username: ${{ steps.doppler.outputs.ATLAS_VPS_USER }}
+          key: ${{ steps.doppler.outputs.ATLAS_VPS_SSH_KEY }}
+          script: |
+            cd /var/www/Backends/sabre-tour-aggregator-backend
+            git pull
+            docker compose up --build --force-recreate -d
